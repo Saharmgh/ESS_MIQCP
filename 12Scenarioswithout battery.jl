@@ -1,3 +1,6 @@
+# 3 scenarios without the Energy Storage Systems.
+# Note: this is not the final version of the code implemented in the paper. 
+
 ### A Pluto.jl notebook ###
 # v0.17.3
 ################################################################################
@@ -21,16 +24,15 @@ end
 # ╔═╡ d3927189-5b08-483e-b678-b1c1a1c1ff95
 begin
 	include("readData.jl")
-	BranchData, NodesData,Nodes,Pdd, Qdd, c_op = readData("E:/Msc-Skoltech/Thesis/Prof.Pozo/Meeting 2/Meeting2/Branch_data_file","E:/Msc-Skoltech/Thesis/Prof.Pozo/Meeting 2/Meeting2/Node_data_file")
+	BranchData, NodesData,Nodes,Pdd, Qdd, c_op = readData("E:/.../Branch_data_file","E:/.../Node_data_file")
 end
 
 #First Scenario (spring)
 
-# PVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+
 
 Sbase= 1e5
-#
-PVDATA = CSV.read("E:/Msc-Skoltech/Thesis/Code/First-Try-withHW6/HW6_data_Demand_PV.csv",DataFrame)
+PVDATA = CSV.read("E:/.../PV_generation.csv",DataFrame)
 
 PV1= 10 .*(PVDATA.PV1)/Sbase
 PV2= 10 .*(PVDATA.PV2)/Sbase
@@ -42,11 +44,9 @@ PVplant[:,4,3] = PV3
 PVplant
 PV= permutedims(PVplant, (2, 1, 3))
 
-# PVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
 # PV= permutedims(PVplant, (2, 1, 3))
 
-#
 # #Second Scenario (summer)
 # PV4= 14.0*(PVDATA.PV1)/100
 # PV5= 14.0*(PVDATA.PV2)/100
@@ -54,7 +54,7 @@ PV= permutedims(PVplant, (2, 1, 3))
 # PVplant[:,1,4] = PV4
 # PVplant[:,1,5] = PV5
 # PVplant[:,1,6] = PV6
-#
+
 # #Third Scenario (fall)
 # PV7= 10.0*(PVDATA.PV1)/100
 # PV8= 10.0*(PVDATA.PV2)/100
@@ -62,8 +62,7 @@ PV= permutedims(PVplant, (2, 1, 3))
 # PVplant[:,1,7] = PV7
 # PVplant[:,1,8] = PV8
 # PVplant[:,1,9] = PV9
-#
-#
+
 # #Forth Scenario (winter)
 # PV10= 9.0*(PVDATA.PV1)/100
 # PV11= 9.0*(PVDATA.PV2)/100
@@ -89,8 +88,8 @@ R= BranchData.R
 X= BranchData.X
 NI= 33
 NL= 32
-# a = [0.84, 0.8, 0.772, 0.78, 0.788, 0.796, 0.788, 0.72, 0.648, 0.624, 0.56, 0.536, 0.52, 0.528, 0.536, 0.56, 0.632, 0.72, 0.88, 1.0, 1.048, 1.024, 0.96, 0.88]
-#
+
+
 a= [0.783041723,0.73781965,0.723014805,0.707940781,0.698788694,0.677792732,0.662718708,0.707940781,0.801076716,0.801076716,0.84333782,0.873485868,0.888559892,0.915746972,0.888559892,0.888559892,0.879407806,0.84333782,0.864333782,0.97577389,1,0.97577389,0.963930013,0.888559892]
 ##########for stress simulation###########################333
 # a= [0.783041723,0.73781965,0.723014805,0.707940781,0.698788694,0.677792732,0.662718708,0.707940781,0.801076716,0.801076716,0.84333782,0.873485868,0.888559892,0.915746972,0.888559892,0.888559892,0.879407806,0.84333782, 1.2 .*0.864333782, 1.2 .*0.97577389, 1.0 ,0.97577389,0.963930013,0.888559892]
@@ -234,12 +233,6 @@ p1=plot!(0.95*ones(33), lab = "Min Voltage Limit = 0.95 ",line = :dash,linecolor
 
 
 
-
-
-
-
-
-
 # p1=plot(1:24,Pdd_[1,1:24,1], lab = "Load", w = 3, palette = cgrad(:thermal), fill = 0, α = 0.6)
 # p1= plot!(1:24,pG_optimal[1,1:24,1], lab = "Generation/ Bus1", w = 0, fillcolor=:green, fill = 0, α = 0.6, xaxis= "Time[hour]", yaxis= "P[p.u]")
 p2= plot(1:24,QG_optimal1, lab = "Reactive Power_ Thermal Generator", w = 1, linecolor=:green, fillcolor=:green, fill = 0, α = 0.6, xaxis= "Time[hour]", yaxis= "Q[MVAR]",framestyle = :box, xticks =  0:1.0:24, legend=:topleft)
@@ -259,47 +252,3 @@ p1= plot(1:33,voltage_profile,  lab = "Voltage Profile_Scenario1_ESS",linecolor 
 print((pl_optimal[1:32,20,1]).^2 + (ql_optimal[1:32,20,1]).^2)
 
 print(voltage_profile)
-
-# v_ESS_Normal = [1.0, 0.9970341993514777, 0.982972935793219, 0.9764817400004036, 0.9703610708624494, 0.9593267596277505, 0.9589326674306509,
-#  0.9545569694819922, 0.952427475195657, 0.9510889688521093, 0.950639877641516, 0.95, 0.9522886442269728, 0.955325588092406, 0.9583444610303046,
-#  0.961900143093166, 0.9745044857516415, 0.979439203059746,0.9965387671427081, 0.9939771446008058, 0.9937005617821777, 0.994131608709237,
-#  0.9782755264361968, 0.9696525079414201, 0.9644256341731098,0.9580819429048972, 0.9565529009872775, 0.9530769256588372, 0.9511083776393392,
-#  0.95, 0.9580259692047998, 0.9619413312996595, 0.9690405080292762]
-
-
-
-
-
-
-# p6= plot(1:24,sqrt.(w_optimal[1,1:24,1]), lab = "V1",linecolor =:black, w = 1,ylims=(0.99,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[2,1:24,1]), lab = "V2",linecolor =:blue, w = 1,ylims=(0.99,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[3,1:24,1]), lab = "V3",linecolor =:pink, w = 1,ylims=(0.99,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[4,1:24,1]), lab = "V4",linecolor =:orange, w = 1,ylims=(0.99,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[5,1:24,1]), lab = "V5",linecolor =:purple, w = 1,ylims=(0.99,1.01),legend=:topleft)
-# #
-
-
-# p6= plot(1:24,sqrt.(w_optimal[1,1:24,1]), lab = "V1",linecolor =:black, w = 1,ylims=(0.995,1.01),legend=:topleft)
-#
-# p6= plot!(1:24,sqrt.(w_optimal[2,1:24,1]), lab = "V2",linecolor =:blue, w = 1,ylims=(0.995,1.01),legend=:topleft)
-#
-# p6= plot!(1:24,sqrt.(w_optimal[3,1:24,1]), lab = "V3",linecolor =:pink, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[4,1:24,1]), lab = "V4",linecolor =:orange, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[5,1:24,1]), lab = "V5",linecolor =:purple, w = 1,ylims=(0.99,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[6,1:24,1]), lab = "V6",linecolor =:brown, w = 1,ylims=(0.99,1.01),legend=:topleft)
-#
-# p6= plot(1:24,sqrt.(w_optimal[7,1:24,1]), lab = "V7",linecolor =:red, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[8,1:24,1]), lab = "V8",linecolor =:green, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[9,1:24,1]), lab = "V9",linecolor =:yellow, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[10,1:24,1]), lab = "V10",linecolor =:orange, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[11,1:24,1]), lab = "V11",linecolor =:black, w = 1,ylims=(0.99,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[12,1:24,1]), lab = "V12",linecolor =:purple, w = 1,ylims=(0.99,1.01),legend=:topleft)
-#
-# p6= plot!(1:24,sqrt.(w_optimal[13,1:24,1]), lab = "V13",linecolor =:orange, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[14,1:24,1]), lab = "V14",linecolor =:gray, w = 1,ylims=(0.99,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[15,1:24,1]), lab = "V15",linecolor =:purple, w = 1,ylims=(0.99,1.01),legend=:topleft)
-#
-# p6= plot!(1:24,sqrt.(w_optimal[15,1:24,1]), lab = "V15",linecolor =:green, w = 1,ylims=(0.99,1.01),legend=:topleft)
-#
-
-savefig("E:/Msc-Skoltech/pre defence/Images/Results with ESS//apparentpower_linecaptest.png")
