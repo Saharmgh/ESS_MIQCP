@@ -1,4 +1,4 @@
-# 12 scenarios with the Energy Storage Systems.
+# 3 scenarios with the Energy Storage Systems.
 # Note: this is not the final version of the code implemented in the paper. 
 ### A Pluto.jl notebook ###
 # v0.17.3
