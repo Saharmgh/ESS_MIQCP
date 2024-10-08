@@ -1,3 +1,5 @@
+# 12 scenarios without considering the Energy Storage Systems.
+# Note: this is not the final version of the code implemented in the paper. 
 ### A Pluto.jl notebook ###
 # v0.17.3
 ################################################################################
@@ -22,12 +24,12 @@ end
 # ╔═╡ d3927189-5b08-483e-b678-b1c1a1c1ff95
 begin
 	include("readData.jl")
-	BranchData, NodesData,Nodes,Pdd, Qdd, c_op = readData("E:/Msc-Skoltech/Thesis/Prof.Pozo/Meeting 2/Meeting2/Branch_data_file","E:/Msc-Skoltech/Thesis/Prof.Pozo/Meeting 2/Meeting2/Node_data_file")
+	BranchData, NodesData,Nodes,Pdd, Qdd, c_op = readData("E:/.../Branch_data_file","E:/.../Node_data_file")
 end
 
 #First Scenario (spring)
 Sbase= 1e5
-PVDATA = CSV.read("E:/Msc-Skoltech/Thesis/Code/First-Try-withHW6/HW6_data_Demand_PV.csv",DataFrame)
+PVDATA = CSV.read("E:/.../HW6_data_Demand_PV.csv",DataFrame)
 PV1= 10 .*(PVDATA.PV1)/Sbase
 PV2= 10 .*(PVDATA.PV2)/Sbase
 PV3= 10 .*(PVDATA.PV3)/Sbase
@@ -148,20 +150,6 @@ m = Model(optimizer_with_attributes(
 @constraint(m, batlimitQ1[i=1:NI,t= 1:24,s= 1:3], -1200 .* y[i] <= Qb[i,t,s])
 @constraint(m, batlimitQ2[i=1:NI,t= 1:24,s= 1:3],  Qb[i,t,s] <= 1200 .*y[i])
 @constraint(m, maximumE_inv[i=1:NI,s= 1:3], Emax[i] <= 1200 .* y[i])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -288,12 +276,7 @@ COST= c.*transpose(cost_coefficients)
 @objective(m, Min, costf1+operation_ESS+investment_ESS)
 
 
-
-# MY WORKING OBJECTIVE FUNCTION
 # @objective(m, Min, sum(Prob[w] .*1000 .*(c[i].* (pG[i,t,w]).^2) + Prob[w] .* 1000 .*(Pb_ch[i,t,w]).^2  + 0.0 .* (Emax[i]) for i in 1:NI, t in 1:24, w in 1:3))
-
-
-
 
 
 
@@ -330,12 +313,6 @@ voltage_profile= sqrt.(value.(w[1:33,20,1]))
 voltage_profile2= sqrt.(value.(w[1:33,20,2]))
 voltage_profile3= sqrt.(value.(w[1:33,20,3]))
 # voltage_profile2= sqrt.(value.(w[1:33,20,1]))
-
-
-
-
-
-
 
 
 
@@ -402,57 +379,3 @@ savefig("E:/Msc-Skoltech/pre defence/Images/Results with ESS//apparentpowerstres
 # PV3= plot!(1:24,PVplant[1:24,1,1], lab = "PV3-Rainy day", w = 1, fillcolor=:red, linecolor=:red,fill = 0, α = 1)
 
 
-# p1=plot(1:24,Pdd_[1,1:24], lab = "Load", w = 3, palette = cgrad(:thermal), fill = 0, α = 0.6)
-# p1= plot(1:24,pG_optimal[1,1:24,1], lab = "Generation/ Bus1", w = 0, fillcolor=:green, fill = 0, α = 0.6, xaxis= "Time[hour]", yaxis= "P[p.u]")
-# p1= plot!(1:24,PVplant[1:24,1,1], lab = "PV", w = 1, fillcolor=:orange, fill = 0, α = 0.6)
-
-
-# p2= plot(1:24,a, lab = "Normalized Load Profile",linecolor =:teal, w = 1,legend=:topleft,xaxis= "Time[hour]", yaxis= "" , framestyle = :box,yticks= 0:0.05:24, xticks =  0:1.0:24)
-# p2= plot!(1:24,Pdd_[32,1:24,1], lab = "Load",linecolor =:blue, w = 1,legend=:topleft,xaxis= "Time[hour]", yaxis= "kAh%" , framestyle = :box)
-# p2= plot!(1:24,Pdd_[31,1:24,1], lab = "Load",linecolor =:blue, w = 1,legend=:topleft,xaxis= "Time[hour]", yaxis= "kAh%" , framestyle = :box)
-
-# p1= plot!(2:23,(-1) .*Pb_optimal1[27, 2:23,1], lab = "Pb_ch",w = 1, fillcolor=:red,linecolor=:red, fill = 0, α = 0.6,xaxis= "Time[hour]", yaxis= "P[p.u]",legend=:top, framestyle = :box)
-# p1= plot!(2:23,Pb_optimal2[27,2:23,1], lab = "Pb_dis",w = 1, fillcolor=:blue,linecolor=:blue, fill = 0, α = 0.6,legend=:top, framestyle = :box)
-# p1= plot!(1:33,voltage_profile2,  lab = "Voltage Profiles_ESS",linecolor =:blue, w = 2, legend=:topright ,xaxis= "Time[hour]", yaxis= "kAh%", framestyle = :box, xticks =  0:1.0:33)
-# p5=plot!(1.19*ones(24), lab = "Max Capacity = 1.28 ",line = :dash,xaxis= "Time[hour]", yaxis= "%",legend=:top)
-
-
-# p3= plot(1:24,Pdd_[3,1:24,1], lab = "Load",linecolor =:black, w = 2)
-# p3= plot!(1:24,pG_optimal[3,1:24,1], lab = "Generation/ Bus3", w = 0, legend=(.4,.4),fillcolor=:green, fill = 0, α = 0.6,xaxis= "Time[hour]", yaxis= "P[p.u]")
-
-#
-# p4= plot(1:24,pG_optimal[4,1:24,1], lab = "Generation/ Bus4", w = 0,legend=(.4,.4),fillcolor=:green, fill = 0, α = 0.6,xaxis= "Time[hour]", yaxis= "P[p.u]")
-# p4= plot!(1:24,Pdd_[4,1:24,1], lab = "Load",linecolor =:black, w = 2)
-
-
-#
-# p5= plot(1:24,Pdd_[5,1:24,1], lab = "Load",linecolor =:black, w = 2)
-# p5= plot!(1:24,pG_optimal[5,1:24,1], lab = "Generation/ Bus5", w = 0,legend=(.4,.4),fillcolor=:green, fill = 0, α = 0.6,xaxis= "Time[hour]", yaxis= "P[p.u]")
-
-# # p5= plot(1:24,eee[2,1:24,1], lab = "SOC", w = 3, palette = cgrad(:brg), fill = 0, α = 0.66,xaxis= "Time[hour]", yaxis= "kAh%")
-# p5=plot!(1.75*ones(24), lab = "Max Capacity = 1.75 ",line = :dash,legend=(.3,.3),xaxis= "Time[hour]", yaxis= "%")
-
-#
-# p6= plot(1:24,sqrt.(w_optimal[1,1:24,1]), lab = "V1",linecolor =:black, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[2,1:24,1]), lab = "V2",linecolor =:blue, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[3,1:24,1]), lab = "V3",linecolor =:pink, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[4,1:24,1]), lab = "V4",linecolor =:orange, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[5,1:24,1]), lab = "V5",linecolor =:purple, w = 1,ylims=(0.99,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[6,1:24,1]), lab = "V6",linecolor =:purple, w = 1,ylims=(0.99,1.01),legend=:topleft)
-#
-# p6= plot(1:24,sqrt.(w_optimal[7,1:24,1]), lab = "V7",linecolor =:red, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[8,1:24,1]), lab = "V8",linecolor =:blue, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[9,1:24,1]), lab = "V9",linecolor =:yellow, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[10,1:24,1]), lab = "V10",linecolor =:orange, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[11,1:24,1]), lab = "V11",linecolor =:purple, w = 1,ylims=(0.99,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[12,1:24,1]), lab = "V12",linecolor =:purple, w = 1,ylims=(0.99,1.01),legend=:topleft)
-#
-# p6= plot!(1:24,sqrt.(w_optimal[13,1:24,1]), lab = "V13",linecolor =:orange, w = 1,ylims=(0.995,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[14,1:24,1]), lab = "V14",linecolor =:purple, w = 1,ylims=(0.99,1.01),legend=:topleft)
-# p6= plot!(1:24,sqrt.(w_optimal[15,1:24,1]), lab = "V15",linecolor =:purple, w = 1,ylims=(0.99,1.01),legend=:topleft)
-
-
-# #
-# end
-#
-# plot(p1, p2,p3, p4,p5,p6,legend=(.5,.5),legendfontsize=0.0,layout = (2,3))
